@@ -44,11 +44,14 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	document.write("it works");
+	const GameView = __webpack_require__(5);
 	
-	const Game = __webpack_require__(2);
-	
-	window.Game = Game;
+	document.addEventListener("DOMContentLoaded", function() {
+	  let canvas = document.getElementById("game-canvas");
+	  const ctx = canvas.getContext("2d");
+	  const view = new GameView(ctx);
+	  view.start();
+	});
 
 
 /***/ },
@@ -95,7 +98,7 @@
 	function Game() {
 	  this.DIM_X = 1000;
 	  this.DIM_Y = 1000;
-	  this.NUM_ASTEROIDS = 25;
+	  this.NUM_ASTEROIDS = 15;
 	  this.asteroids = [];
 	  this.addAsteroids();
 	}
@@ -111,7 +114,7 @@
 	};
 	
 	Game.prototype.draw = function(ctx) {
-	  ctx.clearRect();
+	  ctx.clearRect(0, 0, this.DIM_X, this.DIM_Y);
 	  this.asteroids.forEach( asteroid => asteroid.draw(ctx) );
 	};
 	
@@ -130,7 +133,7 @@
 	const Util = __webpack_require__(4);
 	
 	function Asteroid(pos) {
-	  let options = { pos: pos, vel: Util.randomVec(1), radius: 2, color: "#00FF00"};
+	  let options = { pos: pos, vel: Util.randomVec(1), radius: 20, color: "#00FF00"};
 	  MovingObject.call(this, options);
 	}
 	
@@ -163,6 +166,27 @@
 	};
 	
 	module.exports = Util;
+
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	const Game = __webpack_require__(2);
+	
+	function GameView (ctx) {
+	  this.ctx = ctx;
+	  this.game = new Game;
+	}
+	
+	GameView.prototype.start = function () {
+	  window.setInterval( () => {
+	    this.game.moveObjects();
+	    this.game.draw(this.ctx);
+	  }, 20);
+	};
+	
+	module.exports = GameView;
 
 
 /***/ }
