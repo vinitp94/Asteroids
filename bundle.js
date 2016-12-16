@@ -63,6 +63,7 @@
 	  this.vel = options.vel;
 	  this.radius = options.radius;
 	  this.color = options.color;
+	  this.game = options.game;
 	}
 	
 	MovingObject.prototype.draw = function(ctx) {
@@ -84,6 +85,7 @@
 	MovingObject.prototype.move = function() {
 	  this.pos[0] += this.vel[0];
 	  this.pos[1] += this.vel[1];
+	  this.game.wrap(this.pos);
 	};
 	
 	module.exports = MovingObject;
@@ -105,7 +107,7 @@
 	
 	Game.prototype.addAsteroids = function() {
 	  for(let i = 0; i < this.NUM_ASTEROIDS; i++) {
-	    this.asteroids.push(new Asteroid(this.randomPosition()));
+	    this.asteroids.push(new Asteroid(this.randomPosition(), this));
 	  }
 	};
 	
@@ -122,6 +124,13 @@
 	  this.asteroids.forEach( asteroid => asteroid.move() );
 	};
 	
+	Game.prototype.wrap = function(pos) {
+	  if(pos[0] > this.DIM_X) pos[0] -= this.DIM_X;
+	  if(pos[0] < 0) pos[0] += this.DIM_X;
+	  if(pos[1] > this.DIM_Y) pos[1] -= this.DIM_Y;
+	  if(pos[1] < 0) pos[1] += this.DIM_Y;
+	};
+	
 	module.exports = Game;
 
 
@@ -132,8 +141,8 @@
 	const MovingObject = __webpack_require__(1);
 	const Util = __webpack_require__(4);
 	
-	function Asteroid(pos) {
-	  let options = { pos: pos, vel: Util.randomVec(1), radius: 20, color: "#00FF00"};
+	function Asteroid(pos, game) {
+	  let options = { pos: pos, vel: Util.randomVec(1), radius: 20, color: "#00FF00", game: game};
 	  MovingObject.call(this, options);
 	}
 	
